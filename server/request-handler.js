@@ -23,8 +23,8 @@ var requestHandler = function(request, response) {
   var body2 = {
     results: [{
       username: 'shawndrost',
-      text: 'trololo',
-      roomname: '4chan'
+      text: 'trololo'
+      // roomname: '4chan'
     }]
   };
   // Request and Response come from node's http module.
@@ -46,8 +46,11 @@ var requestHandler = function(request, response) {
   //   console.log(val);
   // });
   // console.log(' request---------------------------------------------------', request.body);
+  var storage = {};
+  storage.results = [];
   request.on('data', function(val) {
-    console.log(JSON.parse(val));
+    storage.results.push(JSON.parse(val));
+    console.log(storage);
   });
   //console.log('response', response);
   // console.log('Serving request type ' + request.method + ' for url ' + request.url);
@@ -84,7 +87,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify(body2));
+  response.end(JSON.stringify(storage));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
