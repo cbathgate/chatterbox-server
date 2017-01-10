@@ -20,6 +20,13 @@ var defaultCorsHeaders = {
 };
 
 var requestHandler = function(request, response) {
+  var body2 = {
+    results: [{
+      username: 'shawndrost',
+      text: 'trololo',
+      roomname: '4chan'
+    }]
+  };
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -34,10 +41,28 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  // var keys = Object.keys(request);
+  // var test = request.on('data', function(val) {
+  //   console.log(val);
+  // });
+  // console.log(' request---------------------------------------------------', request.body);
+  request.on('data', function(val) {
+    console.log(JSON.parse(val));
+  });
+  //console.log('response', response);
+  // console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
+  var statusCode = 404;
+  if (request.method === 'GET') {
+    statusCode = 200;
+  } else if (request.method === 'POST') {
+    statusCode = 201;
+  }
+
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
+  }
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -59,7 +84,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify(body2));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

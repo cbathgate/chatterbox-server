@@ -3,7 +3,7 @@ var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: 'https://api.parse.com/1/classes/messages/',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -27,12 +27,16 @@ var app = {
 
     // Fetch previous messages
     app.startSpinner();
-    app.fetch(false);
+    // app.fetch(false);
+
+    ///////////////////////////////////////////////////
+    app.send('Testy McTester!');
+    ///////////////////////////////////////////////////
 
     // Poll for new messages
-    setInterval(function() {
-      app.fetch(true);
-    }, 3000);
+    // setInterval(function() {
+    //   app.fetch(true);
+    // }, 3000);
   },
 
   send: function(message) {
@@ -48,7 +52,8 @@ var app = {
         app.$message.val('');
 
         // Trigger a fetch to update the messages, pass true to animate
-        app.fetch();
+        // app.fetch();
+        console.log('yo, success!');
       },
       error: function (error) {
         console.error('chatterbox: Failed to send message', error);
@@ -68,6 +73,7 @@ var app = {
 
         // Store messages for caching later
         app.messages = data.results;
+        console.log(data.results);
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
@@ -212,6 +218,7 @@ var app = {
   },
 
   handleSubmit: function(event) {
+    console.log('yo, i was clicked!');
     var message = {
       username: app.username,
       text: app.$message.val(),
@@ -222,6 +229,7 @@ var app = {
 
     // Stop the form from submitting
     event.preventDefault();
+
   },
 
   startSpinner: function() {
