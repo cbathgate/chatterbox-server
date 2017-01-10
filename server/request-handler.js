@@ -22,6 +22,7 @@ var defaultCorsHeaders = {
 var storage = {};
 storage.results = []; 
 
+var keepTrack = {};
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -48,7 +49,10 @@ var requestHandler = function(request, response) {
   //
   //storage of all the data
 
-  console.log('***********');
+  // console.log('url---------------', request.url);
+  // if (request.url === '/classes/room') {
+  //   console.log('in rooom yaaaaaaaa');
+  // }
   if (request.url !== '/classes/messages') {
     statusCode = 404;
     response.writeHead(statusCode, headers);
@@ -56,26 +60,30 @@ var requestHandler = function(request, response) {
   } else {
     if (request.method === 'GET') {
       statusCode = 200;
-      console.log(' storage at GET---------------------------------------------------', storage);
-      // request.on('end', function() {
+      // console.log(' storage at GET---------------------------------------------------', storage);
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify(storage));
-      // });
     } else if (request.method === 'POST') {
       statusCode = 201;
       var body = '';
       request.on('data', function(chunk) {
         body += chunk;
-      }).on('end', function() {
+      });
+      request.on('end', function() {
         body = JSON.parse(body);
-        console.log('bodyyyyyyyyyyyy ----------------------------------', body);
-        storage.results.push(body);
+        // console.log('bodyyyyyyyyyyyy ----------------------------------', body);
+        if (keepTrack[body] === undefined) {
+          keepTrack[body] = body;
+          storage.results.push(body);
+        }
         response.writeHead(statusCode, headers);
-        console.log(' storage at POST---------------------------------------------------', storage);
+        // console.log(' storage at POST---------------------------------------------------', storage);
         response.end('Congrats, your data posted :)');
       });
     }
   }
+
+
 };
 
   // See the note below about CORS headers.
@@ -117,3 +125,4 @@ var requestHandler = function(request, response) {
 // };
 
 exports.requestHandler = requestHandler;
+
