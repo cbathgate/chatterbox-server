@@ -27,16 +27,18 @@ var app = {
 
     // Fetch previous messages
     app.startSpinner();
-    // app.fetch(false);
-
-    ///////////////////////////////////////////////////
-    app.send('Testy McTester!');
-    ///////////////////////////////////////////////////
+    app.send({
+      username: 'person',
+      text: 'i am the coolest everrrrrrr',
+      roomname: 'lobby',
+    });
+    app.fetch(false);
 
     // Poll for new messages
-    // setInterval(function() {
-    //   app.fetch(true);
-    // }, 3000);
+    setInterval(function() {
+      app.fetch(true);
+      console.log('im called');
+    }, 15000);
   },
 
   send: function(message) {
@@ -52,8 +54,7 @@ var app = {
         app.$message.val('');
 
         // Trigger a fetch to update the messages, pass true to animate
-        // app.fetch();
-        console.log('yo, success!');
+        app.fetch();
       },
       error: function (error) {
         console.error('chatterbox: Failed to send message', error);
@@ -73,7 +74,6 @@ var app = {
 
         // Store messages for caching later
         app.messages = data.results;
-        console.log(data.results); //************
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
@@ -218,7 +218,6 @@ var app = {
   },
 
   handleSubmit: function(event) {
-    console.log('yo, i was clicked!');
     var message = {
       username: app.username,
       text: app.$message.val(),
@@ -229,7 +228,6 @@ var app = {
 
     // Stop the form from submitting
     event.preventDefault();
-
   },
 
   startSpinner: function() {

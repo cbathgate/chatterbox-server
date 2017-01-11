@@ -20,7 +20,14 @@ var defaultCorsHeaders = {
 };
 
 var storage = {};
-storage.results = []; 
+var id = 1;
+storage.results = [/*{
+  username: 'person',
+  text: 'i am the coolest everrrrrrr',
+  roomname: 'lobby',
+  objectId: 1
+}*/]; 
+
 
 var keepTrack = {};
 var requestHandler = function(request, response) {
@@ -46,24 +53,19 @@ var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'application/json';
 
-  //
-  //storage of all the data
-
-  // console.log('url---------------', request.url);
-  // if (request.url === '/classes/room') {
-  //   console.log('in rooom yaaaaaaaa');
-  // }
-  if (request.url !== '/classes/messages') {
+  var slicedUrl = request.url.slice(0, 17);
+  if (slicedUrl !== '/classes/messages') {
     statusCode = 404;
     response.writeHead(statusCode, headers);
     response.end('So sad, your request is badddd');
   } else {
     if (request.method === 'GET') {
       statusCode = 200;
-      // console.log(' storage at GET---------------------------------------------------', storage);
+      console.log('get is firing');
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify(storage));
     } else if (request.method === 'POST') {
+      console.log('post is firing');
       statusCode = 201;
       var body = '';
       request.on('data', function(chunk) {
@@ -71,15 +73,19 @@ var requestHandler = function(request, response) {
       });
       request.on('end', function() {
         body = JSON.parse(body);
-        // console.log('bodyyyyyyyyyyyy ----------------------------------', body);
-        if (keepTrack[body] === undefined) {
-          keepTrack[body] = body;
-          storage.results.push(body);
-        }
+        keepTrack[body] = body;
+        id++;
+        body['objectId'] = id;
+        storage.results.push(body);
+        console.log('sending ======================> ', storage);
         response.writeHead(statusCode, headers);
-        // console.log(' storage at POST---------------------------------------------------', storage);
-        response.end('Congrats, your data posted :)');
+        response.end(JSON.stringify(storage));
       });
+    } else if (request.method === 'OPTIONS') {
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify(storage));
+      //
     }
   }
 
